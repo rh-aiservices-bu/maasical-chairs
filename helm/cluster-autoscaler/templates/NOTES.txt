@@ -1,0 +1,39 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    MaaSical Chairs - Cluster Autoscaler                    ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+{{- if .Values.clusterAutoscaler.enabled }}
+ClusterAutoscaler: ENABLED
+  - Max nodes total: {{ .Values.clusterAutoscaler.resourceLimits.maxNodesTotal }}
+  - Scale down after idle: {{ .Values.clusterAutoscaler.scaleDown.unneededTime }}
+  - Delay after add: {{ .Values.clusterAutoscaler.scaleDown.delayAfterAdd }}
+{{- end }}
+
+{{- if .Values.machineAutoscaler.enabled }}
+MachineAutoscalers: ENABLED
+  - Min replicas per AZ: {{ .Values.machineAutoscaler.minReplicas }}
+  - Max replicas per AZ: {{ .Values.machineAutoscaler.maxReplicas }}
+  - Target MachineSets:
+{{- range .Values.machineSet.availabilityZones }}
+    - {{ $.Values.cluster.infraId }}-{{ $.Values.machineSet.existingPattern }}-{{ . }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.machineSet.create }}
+MachineSets: CREATED
+  - Instance type: {{ .Values.machineSet.instanceType }}
+  - GPU count: {{ .Values.machineSet.gpuCount }}
+  - Volume size: {{ .Values.machineSet.volumeSize }}GB
+{{- else }}
+MachineSets: USING EXISTING
+  - Pattern: {{ .Values.cluster.infraId }}-{{ .Values.machineSet.existingPattern }}-*
+{{- end }}
+
+Verify deployment:
+  oc get clusterautoscaler
+  oc get machineautoscaler -n openshift-machine-api
+  oc get machinesets -n openshift-machine-api
+
+Watch autoscaling:
+  oc get machines -n openshift-machine-api -w
+  oc get nodes -l nvidia.com/gpu.present=true -w

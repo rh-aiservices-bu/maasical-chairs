@@ -1,0 +1,25 @@
+{{- if .Values.machineAutoscaler.enabled }}
+{{- $infraId := .Values.cluster.infraId }}
+{{- $pattern := .Values.machineSet.existingPattern }}
+{{- $minReplicas := .Values.machineAutoscaler.minReplicas }}
+{{- $maxReplicas := .Values.machineAutoscaler.maxReplicas }}
+{{- range .Values.machineSet.availabilityZones }}
+---
+apiVersion: autoscaling.openshift.io/v1beta1
+kind: MachineAutoscaler
+metadata:
+  name: {{ $infraId }}-{{ $pattern }}-{{ . }}
+  namespace: openshift-machine-api
+  labels:
+    app.kubernetes.io/name: cluster-autoscaler
+    app.kubernetes.io/component: machine-autoscaler
+    app.kubernetes.io/part-of: maasical-chairs
+spec:
+  minReplicas: {{ $minReplicas }}
+  maxReplicas: {{ $maxReplicas }}
+  scaleTargetRef:
+    apiVersion: machine.openshift.io/v1beta1
+    kind: MachineSet
+    name: {{ $infraId }}-{{ $pattern }}-{{ . }}
+{{- end }}
+{{- end }}

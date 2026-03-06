@@ -1,0 +1,24 @@
+apiVersion: v2
+name: qwen3-4b
+description: A Helm chart for Qwen3-4B model deployment on vLLM
+type: application
+version: 1.0.0
+appVersion: "3-4b"
+keywords:
+  - qwen
+  - vllm
+  - ai
+  - ml
+  - inference
+home: https://github.com/company/llama-stack-mcp-server
+sources:
+  - https://github.com/company/llama-stack-mcp-server
+maintainers:
+  - name: Roberto Carratalá
+    email: rcarrata@redhat.com
+annotations:
+  category: AI Applications
+  openshift.io/display-name: "Qwen3-4B Model"
+  openshift.io/provider-display-name: "Roberto Carratalá"
+  openshift.io/documentation-url: "https://docs.company.com/qwen-models"
+  openshift.io/support-url: "https://support.company.com"

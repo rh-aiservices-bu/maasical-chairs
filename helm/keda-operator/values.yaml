@@ -1,0 +1,18 @@
+# Namespace configuration
+namespace:
+  create: false  # Set to true to create the namespace via Helm (not recommended for openshift-* namespaces)
+  name: openshift-keda
+  enableClusterMonitoring: true
+
+# Operator subscription configuration
+subscription:
+  name: openshift-custom-metrics-autoscaler-operator
+  channel: stable
+  installPlanApproval: Automatic
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+
+# OperatorGroup configuration
+operatorGroup:
+  name: openshift-keda
+  upgradeStrategy: Default

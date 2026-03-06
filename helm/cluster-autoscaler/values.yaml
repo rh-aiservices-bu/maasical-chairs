@@ -1,0 +1,74 @@
+# Cluster Autoscaler Configuration for GPU Nodes
+# Enables scale-from-zero for GPU workloads in MaaSical Chairs
+
+# Cluster infrastructure
+cluster:
+  # Infrastructure ID (required - get with: oc get infrastructure cluster -o jsonpath='{.status.infrastructureName}')
+  infraId: ""
+  # AWS Region
+  region: "us-east-2"
+
+# ClusterAutoscaler settings
+clusterAutoscaler:
+  enabled: true
+  # Max time to provision a node before giving up
+  maxNodeProvisionTime: 15m
+  # Pod priority threshold (pods below this won't trigger scale-up)
+  podPriorityThreshold: -10
+  # Log verbosity (1-4)
+  logVerbosity: 4
+  # Scale down settings
+  scaleDown:
+    enabled: true
+    # Wait after adding a node before considering scale-down
+    delayAfterAdd: 10m
+    # Wait after deleting a node before considering another deletion
+    delayAfterDelete: 5m
+    # Wait after a failed scale-down before retrying
+    delayAfterFailure: 30s
+    # How long a node must be unneeded before removal
+    unneededTime: 5m
+  # Resource limits (max nodes/cores/memory the autoscaler can provision)
+  resourceLimits:
+    maxNodesTotal: 20
+    cores:
+      min: 0
+      max: 100
+    memory:
+      min: 0
+      max: 500  # GB
+
+# MachineAutoscaler settings (one per MachineSet/AZ)
+machineAutoscaler:
+  enabled: true
+  # Min replicas per MachineSet (0 = scale to zero)
+  minReplicas: 0
+  # Max replicas per MachineSet
+  maxReplicas: 5
+
+# MachineSet configuration for GPU nodes
+machineSet:
+  # Whether to create new MachineSets (false = use existing)
+  create: false
+  # If using existing MachineSets, specify the name pattern
+  # The full name will be: {infraId}-{existingPattern}-{az}
+  existingPattern: "worker-gpu-big"
+  # Instance type for GPU nodes (only used if create=true)
+  instanceType: "g6e.2xlarge"
+  # GPU count per node
+  gpuCount: 1
+  # GPU taint configuration (must match pod tolerations)
+  taint:
+    key: "nvidia.com/gpu"
+    value: ""
+    effect: "NoSchedule"
+  # Node labels (only used if create=true)
+  labels:
+    nvidia.com/gpu.present: "true"
+  # EBS volume size in GB (only used if create=true)
+  volumeSize: 250
+  # Availability zones (one MachineSet per AZ)
+  availabilityZones:
+    - us-east-2a
+    - us-east-2b
+    - us-east-2c

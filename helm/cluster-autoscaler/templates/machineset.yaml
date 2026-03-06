@@ -1,0 +1,100 @@
+{{- if .Values.machineSet.create }}
+{{- $infraId := .Values.cluster.infraId }}
+{{- $region := .Values.cluster.region }}
+{{- $instanceType := .Values.machineSet.instanceType }}
+{{- $volumeSize := .Values.machineSet.volumeSize }}
+{{- $taint := .Values.machineSet.taint }}
+{{- $labels := .Values.machineSet.labels }}
+{{- $gpuCount := .Values.machineSet.gpuCount }}
+{{- $pattern := .Values.machineSet.existingPattern }}
+{{- range .Values.machineSet.availabilityZones }}
+---
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  name: {{ $infraId }}-{{ $pattern }}-{{ . }}
+  namespace: openshift-machine-api
+  labels:
+    machine.openshift.io/cluster-api-cluster: {{ $infraId }}
+    app.kubernetes.io/name: cluster-autoscaler
+    app.kubernetes.io/component: machineset
+    app.kubernetes.io/part-of: maasical-chairs
+  annotations:
+    # Cluster Autoscaler capacity hints for scale-from-zero
+    machine.openshift.io/GPU: "{{ $gpuCount }}"
+    machine.openshift.io/memoryMb: "65536"
+    machine.openshift.io/vCPU: "8"
+    capacity.cluster-autoscaler.kubernetes.io/labels: kubernetes.io/arch=amd64
+    capacity.cluster-autoscaler.kubernetes.io/cpu: "8"
+    capacity.cluster-autoscaler.kubernetes.io/memory: "68719476736"
+    capacity.cluster-autoscaler.kubernetes.io/gpu-count: "{{ $gpuCount }}"
+    capacity.cluster-autoscaler.kubernetes.io/gpu-type: nvidia.com/gpu
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: {{ $infraId }}
+      machine.openshift.io/cluster-api-machine-role: worker-gpu
+      machine.openshift.io/cluster-api-machine-type: worker-gpu
+      machine.openshift.io/cluster-api-machineset: {{ $infraId }}-{{ $pattern }}-{{ . }}
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: {{ $infraId }}
+        machine.openshift.io/cluster-api-machine-role: worker-gpu
+        machine.openshift.io/cluster-api-machine-type: worker-gpu
+        machine.openshift.io/cluster-api-machineset: {{ $infraId }}-{{ $pattern }}-{{ . }}
+    spec:
+      lifecycleHooks: {}
+      metadata:
+        labels:
+          node-role.kubernetes.io/worker-gpu: ""
+          {{- range $key, $value := $labels }}
+          {{ $key }}: "{{ $value }}"
+          {{- end }}
+      taints:
+        - key: {{ $taint.key }}
+          {{- if $taint.value }}
+          value: {{ $taint.value }}
+          {{- end }}
+          effect: {{ $taint.effect }}
+      providerSpec:
+        value:
+          apiVersion: machine.openshift.io/v1beta1
+          kind: AWSMachineProviderConfig
+          instanceType: {{ $instanceType }}
+          placement:
+            availabilityZone: {{ . }}
+            region: {{ $region }}
+          ami:
+            id: ""  # Will use cluster default AMI
+          iamInstanceProfile:
+            id: {{ $infraId }}-worker-profile
+          securityGroups:
+            - filters:
+                - name: tag:Name
+                  values:
+                    - {{ $infraId }}-node
+            - filters:
+                - name: tag:Name
+                  values:
+                    - {{ $infraId }}-lb
+          subnet:
+            filters:
+              - name: tag:Name
+                values:
+                  - {{ $infraId }}-subnet-private-{{ . }}
+          tags:
+            - name: kubernetes.io/cluster/{{ $infraId }}
+              value: owned
+          userDataSecret:
+            name: worker-user-data
+          credentialsSecret:
+            name: aws-cloud-credentials
+          blockDevices:
+            - ebs:
+                volumeSize: {{ $volumeSize }}
+                volumeType: gp3
+                iops: 0
+{{- end }}
+{{- end }}
