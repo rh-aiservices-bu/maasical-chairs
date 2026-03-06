@@ -1,0 +1,18 @@
+apiVersion: v2
+name: cluster-autoscaler
+description: GPU Node Autoscaling for MaaSical Chairs - ClusterAutoscaler, MachineAutoscaler, and MachineSet
+type: application
+version: 1.0.0
+appVersion: "1.0"
+keywords:
+  - autoscaling
+  - gpu
+  - openshift
+  - keda
+home: https://github.com/company/maasical-chairs
+maintainers:
+  - name: Roberto Carratalá
+    email: rcarrata@redhat.com
+annotations:
+  category: Infrastructure
+  openshift.io/display-name: "GPU Cluster Autoscaler"

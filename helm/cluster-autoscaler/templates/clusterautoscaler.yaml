@@ -1,0 +1,28 @@
+{{- if .Values.clusterAutoscaler.enabled }}
+apiVersion: autoscaling.openshift.io/v1
+kind: ClusterAutoscaler
+metadata:
+  name: default
+  labels:
+    app.kubernetes.io/name: cluster-autoscaler
+    app.kubernetes.io/component: cluster-autoscaler
+    app.kubernetes.io/part-of: maasical-chairs
+spec:
+  logVerbosity: {{ .Values.clusterAutoscaler.logVerbosity }}
+  maxNodeProvisionTime: {{ .Values.clusterAutoscaler.maxNodeProvisionTime }}
+  podPriorityThreshold: {{ .Values.clusterAutoscaler.podPriorityThreshold }}
+  resourceLimits:
+    maxNodesTotal: {{ .Values.clusterAutoscaler.resourceLimits.maxNodesTotal }}
+    cores:
+      min: {{ .Values.clusterAutoscaler.resourceLimits.cores.min }}
+      max: {{ .Values.clusterAutoscaler.resourceLimits.cores.max }}
+    memory:
+      min: {{ .Values.clusterAutoscaler.resourceLimits.memory.min }}
+      max: {{ .Values.clusterAutoscaler.resourceLimits.memory.max }}
+  scaleDown:
+    enabled: {{ .Values.clusterAutoscaler.scaleDown.enabled }}
+    delayAfterAdd: {{ .Values.clusterAutoscaler.scaleDown.delayAfterAdd }}
+    delayAfterDelete: {{ .Values.clusterAutoscaler.scaleDown.delayAfterDelete }}
+    delayAfterFailure: {{ .Values.clusterAutoscaler.scaleDown.delayAfterFailure }}
+    unneededTime: {{ .Values.clusterAutoscaler.scaleDown.unneededTime }}
+{{- end }}

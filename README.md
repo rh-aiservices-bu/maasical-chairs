@@ -4,6 +4,21 @@
 
 Elastic, cost-efficient GPU model serving with rapid scale-to-zero and on-demand scaling for LLM inference on OpenShift AI.
 
+## Table of Contents
+
+- [The Problem: GPU Costs Never Sleep](#the-problem-gpu-costs-never-sleep)
+- [The Solution: Musical Chairs for Models](#the-solution-musical-chairs-for-models)
+- [Architecture at a Glance](#architecture-at-a-glance)
+- [Why Standard KEDA Can't Scale to Zero](#why-standard-keda-cant-scale-to-zero)
+- [The HTTP Add-on Fix](#the-http-add-on-fix)
+- [Quick Start](#quick-start)
+- [Available Models](#available-models)
+- [Configuration](#configuration)
+- [Scaling Comparison](#scaling-comparison)
+- [GPU Node Autoscaling](#gpu-node-autoscaling)
+- [Cleanup](#cleanup)
+- [Troubleshooting](#troubleshooting)
+
 ## The Problem: GPU Costs Never Sleep
 
 Running LLMs on GPUs is expensive. Traditional deployments keep at least one replica running 24/7, even when no one's asking questions at 3 AM. That's like leaving all the lights on in an empty office.
@@ -28,6 +43,15 @@ Request arrives → Scale 0→1 → Serve → Scale back to 0
 ## Architecture at a Glance
 
 ![HTTP Add-On Architecture](./assets/images/http-addon1.png)
+
+**How it works:**
+
+1. Request arrives → Interceptor catches it (~1ms)
+2. Queue the request → Hold while scaling (~0-5s)
+3. KEDA scales 0→1 → GPU pod starts (~5-15s)
+4. Model loads → vLLM ready (~60-90s cold start)
+5. Forward request → User gets response (~1-3s)
+6. Idle timeout → Scale back to zero (180s default)
 
 <!-- ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -78,15 +102,6 @@ The [KEDA HTTP Add-on](https://kedacore.github.io/http-add-on/scope.html) breaks
 ```
 Request → Route → Interceptor → Queue → KEDA 0→1 → Forward ✓
 ```
-
-**How it works:**
-
-1. **Request arrives** → Interceptor catches it
-2. **Queue the request** → Hold while scaling
-3. **KEDA scales 0→1** → GPU pod starts
-4. **Model loads** → vLLM ready (~60-90s cold start)
-5. **Forward request** → User gets response
-6. **Idle timeout** → Scale back to zero
 
 ## Quick Start
 
