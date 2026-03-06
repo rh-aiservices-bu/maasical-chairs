@@ -31,12 +31,12 @@ Request arrives → Scale 0→1 → Serve → Scale back to 0
 
 **How it works:**
 
-1. Request arrives → Interceptor catches it (~1ms)
-2. Queue the request → Hold while scaling (~0-5s)
-3. KEDA scales 0→1 → GPU pod starts (~5-15s)
+1. Request arrives → Interceptor catches it
+2. Queue the request → Hold while scaling
+3. KEDA scales 0→1 → GPU pod starts
 4. Model loads → vLLM ready (~60-90s cold start)
-5. Forward request → User gets response (~1-3s)
-6. Idle timeout → Scale back to zero (180s default)
+5. Forward request → User gets response
+6. Idle timeout → Scale back to zero
 
 <!-- ```
 ┌─────────────────────────────────────────────────────────────────────┐
