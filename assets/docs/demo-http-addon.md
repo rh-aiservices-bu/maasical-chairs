@@ -2,7 +2,7 @@
 
 This demo shows how to enable scale-to-zero for LLM inference services using the KEDA HTTP Add-on. When idle, models scale to 0 replicas (releasing GPU resources), and automatically scale up when requests arrive.
 
-![HTTP Add-On Architecture](./assets/images/http-addon1.png)
+![HTTP Add-On Architecture](../images/http-addon1.png)
 
 ## Prerequisites
 
@@ -111,10 +111,10 @@ helm install $RELEASE_NAME helm/qwen3-4b/ \
   --set httpAddon.scaledownPeriod=180 \
   -n $NAMESPACE
 
-# Deploy Gemma-7B
-RELEASE_NAME=gemma-7b
+# Deploy Granite4-Micro
+RELEASE_NAME=granite4-micro
 ROUTE_HOST="${RELEASE_NAME}-keda-${NAMESPACE}.${CLUSTER_DOMAIN}"
-helm install $RELEASE_NAME helm/gemma-7b/ \
+helm install $RELEASE_NAME helm/granite4-micro/ \
   --set keda.enabled=true \
   --set httpAddon.enabled=true \
   --set httpAddon.host=$ROUTE_HOST \
@@ -136,7 +136,7 @@ NAME                                              TARGETWORKLOAD                
 httpscaledobject.http.keda.sh/llama3-2-3b         apps/v1/Deployment/llama3-2-3b-predictor    0             1             True
 httpscaledobject.http.keda.sh/granite3-3-8b       apps/v1/Deployment/granite3-3-8b-predictor  0             1             True
 httpscaledobject.http.keda.sh/qwen3-4b            apps/v1/Deployment/qwen3-4b-predictor       0             1             True
-httpscaledobject.http.keda.sh/gemma-7b            apps/v1/Deployment/gemma-7b-predictor       0             1             True
+httpscaledobject.http.keda.sh/granite4-micro            apps/v1/Deployment/granite4-micro-predictor       0             1             True
 ```
 
 Verify pods are at zero (wait for scaledownPeriod):
@@ -159,7 +159,7 @@ oc get pods -n $NAMESPACE -w
 LLAMA_HOST=$(oc get route -n $NAMESPACE -l app.kubernetes.io/name=llama3-2-3b -o jsonpath='{.items[0].spec.host}')
 GRANITE_HOST=$(oc get route -n $NAMESPACE -l app.kubernetes.io/name=granite3-3-8b -o jsonpath='{.items[0].spec.host}')
 QWEN_HOST=$(oc get route -n $NAMESPACE -l app.kubernetes.io/name=qwen3-4b -o jsonpath='{.items[0].spec.host}')
-GEMMA_HOST=$(oc get route -n $NAMESPACE -l app.kubernetes.io/name=gemma-7b -o jsonpath='{.items[0].spec.host}')
+GRANITE4_HOST=$(oc get route -n $NAMESPACE -l app.kubernetes.io/name=granite4-micro -o jsonpath='{.items[0].spec.host}')
 
 # Trigger Llama (first request takes ~60-90s)
 time curl -sk --max-time 300 "https://$LLAMA_HOST/v1/models"
@@ -170,8 +170,8 @@ time curl -sk --max-time 300 "https://$GRANITE_HOST/v1/models"
 # Trigger Qwen (first request takes ~70-100s)
 time curl -sk --max-time 300 "https://$QWEN_HOST/v1/models"
 
-# Trigger Gemma (first request takes ~90-120s)
-time curl -sk --max-time 300 "https://$GEMMA_HOST/v1/models"
+# Trigger Granite4-Micro (first request takes ~60-90s)
+time curl -sk --max-time 300 "https://$GRANITE4_HOST/v1/models"
 ```
 
 You'll see in Terminal 1:
@@ -218,11 +218,11 @@ curl -sk "https://$QWEN_HOST/v1/chat/completions" \
     "max_tokens": 100
   }'
 
-# Chat with Gemma
-curl -sk "https://$GEMMA_HOST/v1/chat/completions" \
+# Chat with Granite4-Micro
+curl -sk "https://$GRANITE4_HOST/v1/chat/completions" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gemma-7b",
+    "model": "granite4-micro",
     "messages": [{"role": "user", "content": "Write a haiku about GPUs."}],
     "max_tokens": 100
   }'
@@ -242,7 +242,7 @@ curl -sk "https://$GEMMA_HOST/v1/chat/completions" \
 ## Cleanup
 
 ```bash
-helm uninstall llama3-2-3b granite3-3-8b qwen3-4b gemma-7b -n $NAMESPACE
+helm uninstall llama3-2-3b granite3-3-8b qwen3-4b granite4-micro -n $NAMESPACE
 oc delete project $NAMESPACE
 ```
 
