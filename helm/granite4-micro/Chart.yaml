@@ -1,0 +1,22 @@
+apiVersion: v2
+name: granite4-micro
+description: A Helm chart for Granite 4.0 H-Micro model deployment on vLLM
+type: application
+version: 1.0.0
+appVersion: "4.0"
+keywords:
+  - granite
+  - vllm
+  - ai
+  - ml
+  - inference
+home: https://github.com/company/maasical-chairs
+sources:
+  - https://github.com/company/maasical-chairs
+maintainers:
+  - name: AI Engineering Team
+    email: ai-engineering@company.com
+annotations:
+  category: AI Applications
+  openshift.io/display-name: "Granite 4.0 H-Micro Model"
+  openshift.io/provider-display-name: "AI Engineering Team"

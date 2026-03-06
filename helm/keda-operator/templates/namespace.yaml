@@ -1,0 +1,10 @@
+{{- if .Values.namespace.create }}
+kind: Project
+apiVersion: project.openshift.io/v1
+metadata:
+  name: {{ .Values.namespace.name }}
+  labels:
+    {{- if .Values.namespace.enableClusterMonitoring }}
+    openshift.io/cluster-monitoring: 'true'
+    {{- end }}
+{{- end }}

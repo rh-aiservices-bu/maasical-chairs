@@ -1,0 +1,27 @@
+apiVersion: v2
+name: keda-operator
+description: Helm chart for deploying OpenShift Custom Metrics Autoscaler (KEDA) Operator
+type: application
+version: 1.0.0
+appVersion: "stable"
+keywords:
+  - keda
+  - autoscaling
+  - kubernetes
+  - openshift
+  - operator
+  - hpa
+  - custom-metrics
+home: https://keda.sh
+sources:
+  - https://github.com/kedacore/keda
+  - https://github.com/openshift/custom-metrics-autoscaler-operator
+maintainers:
+  - name: AI Engineering Team
+    email: ai-engineering@company.com
+annotations:
+  category: Infrastructure
+  openshift.io/display-name: "KEDA Operator"
+  openshift.io/provider-display-name: "AI Engineering Team"
+  openshift.io/documentation-url: "https://keda.sh/docs"
+  openshift.io/support-url: "https://github.com/kedacore/keda/issues"

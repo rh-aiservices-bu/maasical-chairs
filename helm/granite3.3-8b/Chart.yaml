@@ -1,0 +1,28 @@
+apiVersion: v2
+name: granite-3-3-8b
+description: A Helm chart for Granite 3.3-8B model deployment on vLLM with KEDA autoscaling
+type: application
+version: 1.0.0
+appVersion: "3.3-8b"
+keywords:
+  - granite
+  - vllm
+  - ai
+  - ml
+  - inference
+  - ibm
+  - keda
+  - autoscaling
+home: https://github.com/ibm-granite/granite-3.3-models
+sources:
+  - https://github.com/ibm-granite/granite-3.3-models
+  - https://huggingface.co/ibm-granite/granite-3.3-8b-instruct
+maintainers:
+  - name: AI Engineering Team
+    email: ai-engineering@company.com
+annotations:
+  category: AI Applications
+  openshift.io/display-name: "Granite 3.3-8B Model"
+  openshift.io/provider-display-name: "AI Engineering Team"
+  openshift.io/documentation-url: "https://github.com/ibm-granite/granite-3.3-models"
+  openshift.io/support-url: "https://github.com/ibm-granite/granite-3.3-models/issues"

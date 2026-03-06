@@ -1,0 +1,63 @@
+# Default values for qwen3-4b
+
+# Resource requirements
+resources:
+  limits:
+    nvidia.com/gpu: 1
+    memory: 16Gi
+    cpu: 4
+  requests:
+    nvidia.com/gpu: 1
+    memory: 8Gi
+    cpu: 1
+
+# KEDA Autoscaling Configuration (Prometheus-based, 1→N scaling)
+keda:
+  enabled: false
+  threshold: 2
+  query: 'sum(vllm:num_requests_waiting{model_name="qwen3-4b"})'
+
+# HTTP Add-on for scale-to-zero (requires keda.enabled=true)
+# Enables 0→N scaling using KEDA HTTP Add-on interceptor
+httpAddon:
+  enabled: false
+  # Required: Route hostname (e.g., qwen3-4b-llm.apps.cluster.example.com)
+  host: ""
+  # Path prefixes to apply scaling rule
+  pathPrefixes:
+    - /v1
+  # Scaling configuration
+  minReplicas: 0
+  maxReplicas: 1
+  scaledownPeriod: 180  # 3 minutes before scaling to zero (demo)
+  targetValue: 2        # Scale up at 2 req/s per replica
+  granularity: "1s"
+  window: "1m"
+  # KEDA namespace where HTTP Add-on is installed
+  kedaNamespace: openshift-keda
+  # Optional: Interceptor ClusterIP (auto-detected if empty)
+  # Use this if helm template fails or for GitOps workflows
+  # Get with: oc get svc keda-add-ons-http-interceptor-proxy -n openshift-keda -o jsonpath='{.spec.clusterIP}'
+  interceptorIP: ""
+
+nodeSelector:
+  nvidia.com/gpu.present: "true"
+
+tolerations:
+  - effect: NoSchedule
+    key: nvidia.com/gpu
+    operator: Exists
+
+# InferenceService configuration
+inferenceService:
+  displayName: "qwen3-4b"
+  maxReplicas: 1
+  minReplicas: 1
+  modelFormat: "vLLM"
+  modelName: ""
+  storageUri: "oci://quay.io/redhat-ai-services/modelcar-catalog:qwen3-4b"
+
+# Serving Runtime configuration
+servingRuntime:
+  image: "registry.redhat.io/rhaiis/vllm-cuda-rhel9@sha256:094db84a1da5e8a575d0c9eade114fa30f4a2061064a338e3e032f3578f8082a"
+  servedModelName: "qwen3-4b"
