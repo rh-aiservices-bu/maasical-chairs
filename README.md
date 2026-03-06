@@ -4,21 +4,6 @@
 
 Elastic, cost-efficient GPU model serving with rapid scale-to-zero and on-demand scaling for LLM inference on OpenShift AI.
 
-## Table of Contents
-
-- [The Problem: GPU Costs Never Sleep](#the-problem-gpu-costs-never-sleep)
-- [The Solution: Musical Chairs for Models](#the-solution-musical-chairs-for-models)
-- [Architecture at a Glance](#architecture-at-a-glance)
-- [Why Standard KEDA Can't Scale to Zero](#why-standard-keda-cant-scale-to-zero)
-- [The HTTP Add-on Fix](#the-http-add-on-fix)
-- [Quick Start](#quick-start)
-- [Available Models](#available-models)
-- [Configuration](#configuration)
-- [Scaling Comparison](#scaling-comparison)
-- [GPU Node Autoscaling](#gpu-node-autoscaling)
-- [Cleanup](#cleanup)
-- [Troubleshooting](#troubleshooting)
-
 ## The Problem: GPU Costs Never Sleep
 
 Running LLMs on GPUs is expensive. Traditional deployments keep at least one replica running 24/7, even when no one's asking questions at 3 AM. That's like leaving all the lights on in an empty office.
