@@ -17,11 +17,11 @@ sources:
   - https://github.com/kedacore/keda
   - https://github.com/openshift/custom-metrics-autoscaler-operator
 maintainers:
-  - name: AI Engineering Team
-    email: ai-engineering@company.com
+  - name: Roberto Carratalá
+    email: rcarrata@redhat.com
 annotations:
   category: Infrastructure
   openshift.io/display-name: "KEDA Operator"
-  openshift.io/provider-display-name: "AI Engineering Team"
+  openshift.io/provider-display-name: "Roberto Carratalá"
   openshift.io/documentation-url: "https://keda.sh/docs"
   openshift.io/support-url: "https://github.com/kedacore/keda/issues"

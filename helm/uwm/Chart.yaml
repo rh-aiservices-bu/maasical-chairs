@@ -14,7 +14,7 @@ home: https://github.com/prometheus-operator/prometheus-operator
 sources:
   - https://github.com/prometheus-operator/prometheus-operator
 maintainers:
-  - name: DevOps Team
-    email: devops@example.com
+  - name: Roberto Carratalá
+    email: rcarrata@redhat.com
 annotations:
   category: Monitoring

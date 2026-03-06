@@ -3,9 +3,9 @@
 apiVersion: http.keda.sh/v1alpha1
 kind: HTTPScaledObject
 metadata:
-  name: {{ include "gemma-7b.fullname" . }}
+  name: {{ include "granite4-micro.fullname" . }}
   labels:
-    {{- include "gemma-7b.labels" . | nindent 4 }}
+    {{- include "granite4-micro.labels" . | nindent 4 }}
 spec:
   hosts:
     - {{ required "httpAddon.host is required when httpAddon.enabled=true" .Values.httpAddon.host }}
@@ -18,10 +18,10 @@ spec:
     - /v1
     {{- end }}
   scaleTargetRef:
-    name: {{ include "gemma-7b.fullname" . }}-predictor
+    name: {{ include "granite4-micro.fullname" . }}-predictor
     kind: Deployment
     apiVersion: apps/v1
-    service: {{ include "gemma-7b.fullname" . }}-predictor
+    service: {{ include "granite4-micro.fullname" . }}-predictor
     port: 80
   replicas:
     min: {{ .Values.httpAddon.minReplicas | default 0 }}

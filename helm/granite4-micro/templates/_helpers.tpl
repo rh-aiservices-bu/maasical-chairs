@@ -1,61 +1,58 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "gemma-7b.name" -}}
+{{- define "granite4-micro.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+Use release name directly to avoid duplication.
 */}}
-{{- define "gemma-7b.fullname" -}}
+{{- define "granite4-micro.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
 {{- end }}
 {{- end }}
 
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "gemma-7b.chart" -}}
+{{- define "granite4-micro.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "gemma-7b.labels" -}}
-helm.sh/chart: {{ include "gemma-7b.chart" . }}
-{{ include "gemma-7b.selectorLabels" . }}
+{{- define "granite4-micro.labels" -}}
+helm.sh/chart: {{ include "granite4-micro.chart" . }}
+{{ include "granite4-micro.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/component: llm-inference
-app.kubernetes.io/part-of: gemma-stack
+app.kubernetes.io/part-of: granite-stack
 {{- end }}
 
 {{/*
 Selector labels
 */}}
-{{- define "gemma-7b.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "gemma-7b.name" . }}
+{{- define "granite4-micro.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "granite4-micro.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "gemma-7b.serviceAccountName" -}}
+{{- define "granite4-micro.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "gemma-7b.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "granite4-micro.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

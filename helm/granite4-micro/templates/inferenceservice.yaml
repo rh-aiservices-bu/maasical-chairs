@@ -1,14 +1,14 @@
 apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
-  name: {{ include "gemma-7b.fullname" . }}
+  name: {{ include "granite4-micro.fullname" . }}
   labels:
-    {{- include "gemma-7b.labels" . | nindent 4 }}
+    {{- include "granite4-micro.labels" . | nindent 4 }}
     opendatahub.io/dashboard: 'true'
     monitoring.opendatahub.io/scrape: 'true'
     opendatahub.io/genai-asset: 'true'
   annotations:
-    openshift.io/display-name: {{ .Values.inferenceService.displayName | default "gemma-7b" }}
+    openshift.io/display-name: {{ .Values.inferenceService.displayName | default "granite4-micro" }}
     serving.knative.openshift.io/enablePassthrough: 'true'
     {{- if and .Values.keda.enabled .Values.httpAddon.enabled }}
     serving.kserve.io/autoscalerClass: external
@@ -39,7 +39,7 @@ spec:
               backend: "prometheus"
               serverAddress: "https://thanos-querier.openshift-monitoring.svc.cluster.local:9091"
               query: >
-                {{ .Values.keda.query | default "sum(vllm:num_requests_waiting{model_name=\"gemma-7b\"})" }}
+                {{ .Values.keda.query | default "sum(vllm:num_requests_waiting{model_name=\"granite4-micro\"})" }}
             target:
               type: Value
               value: {{ .Values.keda.threshold | default 2 }}
@@ -54,8 +54,8 @@ spec:
       name: {{ .Values.inferenceService.modelName | default "" }}
       resources:
         {{- toYaml .Values.resources | nindent 8 }}
-      runtime: {{ include "gemma-7b.fullname" . }}
-      storageUri: {{ .Values.inferenceService.storageUri | default "oci://quay.io/redhat-ai-services/modelcar-catalog:gemma-7b" }}
+      runtime: {{ include "granite4-micro.fullname" . }}
+      storageUri: {{ .Values.inferenceService.storageUri | default "oci://quay.io/redhat-ai-services/modelcar-catalog:granite4-micro" }}
     tolerations:
       {{- toYaml .Values.tolerations | nindent 6 }}
     nodeSelector:

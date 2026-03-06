@@ -3,9 +3,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: keda-autoscaling-metrics-{{ include "gemma-7b.fullname" . }}
+  name: keda-autoscaling-metrics-{{ include "granite4-micro.fullname" . }}
   labels:
-    {{- include "gemma-7b.labels" . | nindent 4 }}
+    {{- include "granite4-micro.labels" . | nindent 4 }}
 rules:
   - apiGroups:
       - monitoring.coreos.com
@@ -20,13 +20,13 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: keda-autoscaling-metrics-{{ include "gemma-7b.fullname" . }}
+  name: keda-autoscaling-metrics-{{ include "granite4-micro.fullname" . }}
   labels:
-    {{- include "gemma-7b.labels" . | nindent 4 }}
+    {{- include "granite4-micro.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: keda-autoscaling-metrics-{{ include "gemma-7b.fullname" . }}
+  name: keda-autoscaling-metrics-{{ include "granite4-micro.fullname" . }}
 subjects:
   - kind: ServiceAccount
     name: inference-prometheus-auth

@@ -14,9 +14,9 @@ home: https://github.com/company/maasical-chairs
 sources:
   - https://github.com/company/maasical-chairs
 maintainers:
-  - name: AI Engineering Team
-    email: ai-engineering@company.com
+  - name: Roberto Carratalá
+    email: rcarrata@redhat.com
 annotations:
   category: AI Applications
   openshift.io/display-name: "Granite 4.0 H-Micro Model"
-  openshift.io/provider-display-name: "AI Engineering Team"
+  openshift.io/provider-display-name: "Roberto Carratalá"

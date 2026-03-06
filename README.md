@@ -21,6 +21,8 @@ Idle model → 0 replicas → 0 GPUs → $0 cost
 Request arrives → Scale 0→1 → Serve → Scale back to 0
 ```
 
+> **Note:** This project currently supports **vLLM** serving runtime. Support for **llm-d** (distributed LLM serving) is under development.
+
 **Density Goal:** Serve up to 80 models on 4-15 dynamically scaled GPU nodes.
 
 ## Architecture at a Glance
@@ -144,6 +146,33 @@ TIMEOUT=300 ./scripts/test-models.sh 2>&1
 | No autoscaling | Fixed | Full GPU cost | Instant |
 | Prometheus KEDA | 1→N | 1 GPU minimum | Instant |
 | **HTTP Add-on** | **0→N** | **$0** | ~60-90s cold start |
+
+## GPU Node Autoscaling
+
+MaaSical Chairs supports **cluster-level GPU node autoscaling** - automatically provisioning new GPU nodes when demand exceeds capacity:
+
+```
+4 models need GPUs → Only 3 nodes available → Cluster Autoscaler → New node provisioned
+```
+
+**Quick Setup:**
+```bash
+# Get cluster infrastructure ID
+INFRA_ID=$(oc get infrastructure cluster -o jsonpath='{.status.infrastructureName}')
+
+# Install cluster autoscaler
+helm install cluster-autoscaler helm/cluster-autoscaler/ \
+  --set cluster.infraId=$INFRA_ID \
+  --set machineAutoscaler.minReplicas=0 \
+  --set machineAutoscaler.maxReplicas=5
+```
+
+**Key Features:**
+- Scale GPU nodes from 0 to N based on pending pods
+- Automatic scale-down of idle nodes after 5 minutes
+- Per-AZ MachineAutoscalers for high availability
+
+See **[Cluster Autoscaling Guide](./assets/docs/cluster-autoscaling.md)** for detailed configuration.
 
 ## Cleanup
 
